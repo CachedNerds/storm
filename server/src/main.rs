@@ -1,16 +1,11 @@
-extern crate storm;
-
-#[macro_use]
+extern crate storm_server;
 extern crate diesel;
 
-use storm::db::establish_connection;
-use storm::models::users::*;
-use diesel::prelude::*;
+use storm_server::db::establish_connection;
+use storm_server::models::users::*;
 use std::io::stdin;
 
 fn main() {
-    use storm::schema::users::dsl::*;
-
     let connection = establish_connection();
 
     println!("User ID: ");
@@ -28,16 +23,11 @@ fn main() {
         username: Some(String::from(name))
     };
 
-    storm::update_user(&connection, user_id, &updated_user);
+    storm_server::update_user(&connection, user_id, &updated_user);
 
-    let results = users
-        .load::<User>(&connection)
-        .expect("Error loading users");
+    let user = storm_server::fetch_user(&connection, user_id);
 
-    println!("Displaying {} users", results.len());
-    for user in results {
-        println!("{}", user.id);
-        println!("--------");
-        println!("{}", user.username);
-    }
+    println!("{}", user.id);
+    println!("--------");
+    println!("{}", user.username);
 }
