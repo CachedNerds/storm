@@ -1,5 +1,5 @@
 [package]
-name = "client"
+name = "storm_client"
 version = "0.1.0"
 authors = ["Mackenzie Clark <mackenzie.a.z.c@gmail.com>"]
 
