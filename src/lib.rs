@@ -12,7 +12,7 @@ use models::users::*;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 
-pub fn create_user<'a>(conn: &PgConnection, username: &'a str) -> User {
+pub fn create_user(conn: &PgConnection, username: &str) -> User {
     use schema::users;
 
     let new_user = NewUser { username };
@@ -21,4 +21,11 @@ pub fn create_user<'a>(conn: &PgConnection, username: &'a str) -> User {
         .values(&new_user)
         .get_result(conn)
         .expect("Error saving new user")
+}
+
+pub fn update_user(conn: &PgConnection, id: i32, user: &UpdateUser) {
+    diesel::update(schema::users::table.find(id))
+        .set(user)
+        .execute(conn)
+        .expect(&format!("Unable to find user {}", id));
 }

@@ -12,3 +12,9 @@ pub struct User {
 pub struct NewUser<'a> {
     pub username: &'a str
 }
+
+#[derive(AsChangeset)]
+#[table_name = "users"]
+pub struct UpdateUser {
+    pub username: Option<String>
+}
