@@ -1,5 +1,5 @@
 [package]
-name = "storm"
+name = "storm_server"
 version = "0.1.0"
 authors = ["Danny Peck <danieljpeck93@gmail.com>"]
 
