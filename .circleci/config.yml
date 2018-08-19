@@ -1,7 +1,6 @@
 version: 2
 jobs:
   get_project:
-
     docker:
       - image: circleci/rust
     steps:
@@ -20,8 +19,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: '~/project'
-      - restore_cache:
-          key: client-app-cache
       - run:
           name: Build Client
           command: cargo build
@@ -52,8 +49,6 @@ jobs:
       - image: circleci/rust
     steps:
       - checkout
-      - restore_cache:
-          key: server-cache
       - run:
           name: Build Server
           command: cargo build
