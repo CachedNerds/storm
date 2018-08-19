@@ -3,7 +3,7 @@ jobs:
   get_project:
     working_directory: ~/project/storm
     docker:
-      - image: circleci/rust
+      - image: circleci/buildpack-deps:stable
     steps:
       - checkout
       - persist_to_workspace:
@@ -30,6 +30,9 @@ jobs:
           key: client-app-cache
           paths:
           - "~/.cargo"
+      - run:
+          name: ls
+          command: ls
   test_client:
     docker:
       - image: circleci/rust
