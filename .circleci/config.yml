@@ -20,11 +20,8 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
-          name: change workding directory
-          command: cd client
-      - run:
           name: Build Client
-          command: cargo build
+          command: cargo build --manifest-path=client/Cargo.toml
 #      - persist_to_workspace:
 #          root: client
 #          paths:
