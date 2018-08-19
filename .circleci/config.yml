@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   get_project:
-    working_directory: /tmp
+    working_directory: ~/project
     docker:
     - image: circleci/rust
     steps:
@@ -13,7 +13,7 @@ jobs:
         - client
         - server
   build_client:
-    working_directory: /tmp/client
+    working_directory: ~/project/client
     docker:
     - image: circleci/rust
     steps:
@@ -33,7 +33,7 @@ jobs:
               - "~/.cargo"
               - "./target"
   test_client:
-    working_directory: /tmp/client
+    working_directory: ~/project/client
     docker:
     - image: circleci/rust
     steps:
@@ -44,7 +44,7 @@ jobs:
         name: Test Client
         command: cargo test
   build_server:
-    working_directory: /tmp/client
+    working_directory: ~/project/server
     docker:
     - image: circleci/rust
     steps:
@@ -64,7 +64,7 @@ jobs:
             - "~/.cargo"
             - "./target"
   test_server:
-    working_directory: /tmp/server
+    working_directory: ~/project/server
     docker:
     - image: circleci/rust
     steps:
