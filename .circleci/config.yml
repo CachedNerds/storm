@@ -24,14 +24,14 @@ jobs:
         name: Build Client
         command: cargo build
     - persist_to_workspace:
-        root: "./client/"
+        root: "~/project/client/"
         paths:
           - target
           - save_cache:
               key: client-app-cache
               paths:
               - "~/.cargo"
-              - "./target"
+              - "~/project/target"
   test_client:
     working_directory: ~/project/client
     docker:
@@ -55,14 +55,14 @@ jobs:
         name: Build Server
         command: cargo build
     - persist_to_workspace:
-        root: "./server/"
+        root: "~/project/server/"
         paths:
         - target
         - save_cache:
             key: server-cache
             paths:
             - "~/.cargo"
-            - "./target"
+            - "~/project/target"
   test_server:
     working_directory: ~/project/server
     docker:
