@@ -27,14 +27,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "server/Cargo.toml" }}
           - server-cache-v1-{{ arch }}-{{ .Branch }}
           - server-cache-v1-
       - run:
           name: Test Server
           command: cargo test --manifest-path=server/Cargo.toml
       - save_cache:
-          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "server/Cargo.toml" }}
           paths:
           - "~/.cargo"
           - "~/project/storm/server/target"
