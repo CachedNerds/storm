@@ -1,12 +1,13 @@
 extern crate storm_server;
 extern crate diesel;
 
-use storm_server::db::establish_connection;
+use storm_server::db;
 use storm_server::models::users::*;
+use storm_server::controllers;
 use std::io::stdin;
 
 fn main() {
-    let connection = establish_connection();
+    let connection = db::establish_connection();
 
     println!("User ID: ");
     let mut user_id = String::new();
@@ -23,9 +24,9 @@ fn main() {
         username: Some(String::from(name))
     };
 
-    storm_server::update_user(&connection, user_id, &updated_user);
+    controllers::users::update(&connection, user_id, &updated_user);
 
-    let user = storm_server::fetch_user(&connection, user_id);
+    let user = controllers::users::fetch(&connection, user_id);
 
     println!("{}", user.id);
     println!("--------");
