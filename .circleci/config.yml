@@ -18,7 +18,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/project
+          at: ~/project/storm
       - run:
           name: Build Client
           command: cargo build --manifest-path=client/Cargo.toml
@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/project
+          at: ~/project/storm
       - restore_cache:
           key: client-app-cache
       - run:
@@ -68,7 +68,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/project
+          at: ~/project/storm
       - restore_cache:
           key: server-cache
       - run:
@@ -84,13 +84,13 @@ workflows:
             - get_project
       - test_client:
           requires:
-          - build_client
+            - build_client
       - build_server:
           requires:
             - get_project
       - test_server:
           requires:
-          - build_server
+            - build_server
 #    - deploy:
 #        requires:
 #        - build
