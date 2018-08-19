@@ -22,14 +22,14 @@ jobs:
       - run:
           name: Build Client
           command: cargo build --manifest-path=client/Cargo.toml
-#      - persist_to_workspace:
-#          root: client
-#          paths:
-#            - target
-#            - save_cache:
-#                key: client-app-cache
-#                paths:
-#                - "~/.cargo"
+      - persist_to_workspace:
+          root: client
+          paths:
+            - target
+      - save_cache:
+          key: client-app-cache
+          paths:
+          - "~/.cargo"
   test_client:
     docker:
       - image: circleci/rust
