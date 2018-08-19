@@ -1,43 +1,45 @@
 version: 2
 jobs:
   get_project:
+    working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
       - checkout
-      - attach_workspace:
-          at: '~/project'
       - persist_to_workspace:
-          root: "~/project/"
+          root: "."
           paths:
             - client
             - server
   build_client:
+    working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
       - checkout
       - attach_workspace:
-          at: '~/project'
+          at: ~/project
+      - run:
+          name: change workding directory
+          command: cd client
       - run:
           name: Build Client
           command: cargo build
-      - persist_to_workspace:
-          root: "~/project/client/"
-          paths:
-            - target
-            - save_cache:
-                key: client-app-cache
-                paths:
-                - "~/.cargo"
-                - "~/project/client/target"
+#      - persist_to_workspace:
+#          root: client
+#          paths:
+#            - target
+#            - save_cache:
+#                key: client-app-cache
+#                paths:
+#                - "~/.cargo"
   test_client:
     docker:
       - image: circleci/rust
     steps:
       - checkout
       - attach_workspace:
-          at: '~/project'
+          at: '~/project/client'
       - restore_cache:
           key: client-app-cache
       - run:
