@@ -5,3 +5,5 @@ authors = ["Mackenzie Clark <mackenzie.a.z.c@gmail.com>"]
 
 [dependencies]
 relm = "0.14.6"
+gtk = "0.4.1"
+relm-derive = "0.14.6"
