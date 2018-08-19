@@ -91,8 +91,5 @@ impl Widget for Win {
 }
 
 fn main() {
-    println!("Hello, storm client!");
-    fn main() {
-        Win::run(()).unwrap();
-    }
+    Win::run(()).expect("Win::run failed");
 }
