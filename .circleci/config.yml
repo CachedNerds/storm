@@ -1,22 +1,25 @@
 version: 2
 jobs:
   get_project:
-    working_directory: ~/project
+
     docker:
       - image: circleci/rust
     steps:
       - checkout
+      - attach_workspace:
+          at: '~/project'
       - persist_to_workspace:
           root: "~/project/"
           paths:
             - client
             - server
   build_client:
-    working_directory: "~/project/client"
     docker:
       - image: circleci/rust
     steps:
       - checkout
+      - attach_workspace:
+          at: '~/project'
       - restore_cache:
           key: client-app-cache
       - run:
@@ -32,11 +35,12 @@ jobs:
                 - "~/.cargo"
                 - "~/project/client/target"
   test_client:
-    working_directory: "~/project/client"
     docker:
       - image: circleci/rust
     steps:
       - checkout
+      - attach_workspace:
+          at: '~/project'
       - restore_cache:
           key: client-app-cache
       - run:
