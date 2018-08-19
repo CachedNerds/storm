@@ -31,7 +31,7 @@ jobs:
               key: client-app-cache
               paths:
               - "~/.cargo"
-              - "~/project/target"
+              - "~/project/client/target"
   test_client:
     working_directory: ~/project/client
     docker:
@@ -62,7 +62,7 @@ jobs:
             key: server-cache
             paths:
             - "~/.cargo"
-            - "~/project/target"
+            - "~/project/server/target"
   test_server:
     working_directory: ~/project/server
     docker:
