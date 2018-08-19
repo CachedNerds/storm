@@ -17,8 +17,6 @@ jobs:
       - image: circleci/rust
     steps:
       - checkout
-#      - attach_workspace:
-#          at: ~/project/storm
       - restore_cache:
           keys:
           - client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
@@ -27,10 +25,6 @@ jobs:
       - run:
           name: Build Client
           command: cargo build --manifest-path=client/Cargo.toml
-#      - persist_to_workspace:
-#          root: client
-#          paths:
-#            - target
       - save_cache:
           key: client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
           paths:
@@ -44,8 +38,6 @@ jobs:
       - image: circleci/rust
     steps:
       - checkout
-#      - attach_workspace:
-#          at: ~/project/storm
       - restore_cache:
           keys:
           - client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
@@ -54,36 +46,48 @@ jobs:
       - run:
           name: Test Client
           command: cargo test --manifest-path=client/Cargo.toml
+      - save_cache:
+          key: client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          paths:
+          - "~/.cargo"
+          - "~/project/storm/client/target"
   build_server:
     working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          - server-cache-v1-{{ arch }}-{{ .Branch }}
+          - server-cache-v1-
       - run:
           name: Build Server
           command: cargo build --manifest-path=server/Cargo.toml
-#      - persist_to_workspace:
-#          root: server
-#          paths:
-#            - target
       - save_cache:
-          key: server-cache
+          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
           paths:
           - "~/.cargo"
-          - "~/project/storm/server/target"
+          - "~/project/storm/client/target"
   test_server:
     docker:
     - image: circleci/rust
     steps:
       - checkout
-#      - attach_workspace:
-#          at: ~/project/storm
       - restore_cache:
-          key: server-cache
+          keys:
+          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          - server-cache-v1-{{ arch }}-{{ .Branch }}
+          - server-cache-v1-
       - run:
           name: Test Server
           command: cargo test --manifest-path=server/Cargo.toml
+      - save_cache:
+          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          paths:
+          - "~/.cargo"
+          - "~/project/storm/client/target"
 workflows:
   version: 2
   build:
