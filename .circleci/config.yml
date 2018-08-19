@@ -79,8 +79,8 @@ workflows:
   build:
     jobs:
     - build_client
-      requires:
-      - get_project
+        requires:
+        - get_project
     - build_server
       requires:
         - get_project
