@@ -1,96 +1,49 @@
 version: 2
 jobs:
-  get_project:
-    working_directory: ~/project/storm
-    docker:
-      - image: circleci/buildpack-deps:stable
-    steps:
-      - checkout
-      - persist_to_workspace:
-          root: "."
-          paths:
-            - client
-            - server
-  build_client:
-    working_directory: ~/project/storm
-    docker:
-      - image: circleci/rust
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: Build Client
-          command: cargo build --manifest-path=client/Cargo.toml
-      - persist_to_workspace:
-          root: client
-          paths:
-            - target
-      - save_cache:
-          key: client-app-cache
-          paths:
-          - "~/.cargo"
-      - run:
-          name: ls
-          command: ls
   test_client:
+    working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/project
       - restore_cache:
-          key: client-app-cache
+          keys:
+          - client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
+          - client-app-cache-v1-{{ arch }}-{{ .Branch }}
+          - client-app-cache-v1-
       - run:
           name: Test Client
           command: cargo test --manifest-path=client/Cargo.toml
-  build_server:
-    working_directory: ~/project/storm
-    docker:
-      - image: circleci/rust
-    steps:
-      - checkout
-      - run:
-          name: Build Server
-          command: cargo build --manifest-path=server/Cargo.toml
-      - persist_to_workspace:
-          root: server
-          paths:
-            - target
       - save_cache:
-          key: server-cache
+          key: client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
           paths:
           - "~/.cargo"
+          - "~/project/storm/client/target"
   test_server:
+    working_directory: ~/project/storm
     docker:
     - image: circleci/rust
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/project
       - restore_cache:
-          key: server-cache
+          keys:
+          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "server/Cargo.toml" }}
+          - server-cache-v1-{{ arch }}-{{ .Branch }}
+          - server-cache-v1-
       - run:
           name: Test Server
           command: cargo test --manifest-path=server/Cargo.toml
+      - save_cache:
+          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "server/Cargo.toml" }}
+          paths:
+          - "~/.cargo"
+          - "~/project/storm/server/target"
 workflows:
   version: 2
   build:
     jobs:
-      - get_project
-      - build_client:
-          requires:
-            - get_project
-      - test_client:
-          requires:
-          - build_client
-      - build_server:
-          requires:
-            - get_project
-      - test_server:
-          requires:
-          - build_server
+      - test_client
+      - test_server
 #    - deploy:
 #        requires:
 #        - build
