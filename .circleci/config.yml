@@ -78,6 +78,7 @@ workflows:
   version: 2
   build:
     jobs:
+    - get_project
     - build_client
         requires:
         - get_project
