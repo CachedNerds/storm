@@ -1,25 +1,7 @@
 version: 2
 jobs:
-  build_client:
-    working_directory: ~/project/storm
-    docker:
-      - image: circleci/rust
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
-          - client-app-cache-v1-{{ arch }}-{{ .Branch }}
-          - client-app-cache-v1-
-      - run:
-          name: Build Client
-          command: cargo build --manifest-path=client/Cargo.toml
-      - save_cache:
-          key: client-app-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
-          paths:
-          - "~/.cargo"
-          - "~/project/storm/client/target"
   test_client:
+    working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
@@ -37,26 +19,8 @@ jobs:
           paths:
           - "~/.cargo"
           - "~/project/storm/client/target"
-  build_server:
-    working_directory: ~/project/storm
-    docker:
-      - image: circleci/rust
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
-          - server-cache-v1-{{ arch }}-{{ .Branch }}
-          - server-cache-v1-
-      - run:
-          name: Build Server
-          command: cargo build --manifest-path=server/Cargo.toml
-      - save_cache:
-          key: server-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "client/Cargo.toml" }}
-          paths:
-          - "~/.cargo"
-          - "~/project/storm/server/target"
   test_server:
+    working_directory: ~/project/storm
     docker:
     - image: circleci/rust
     steps:
@@ -78,14 +42,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_client
-      - test_client:
-          requires:
-            - build_client
-      - build_server
-      - test_server:
-          requires:
-            - build_server
+      - test_client
+      - test_server
 #    - deploy:
 #        requires:
 #        - build
