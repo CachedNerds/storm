@@ -13,7 +13,7 @@ jobs:
         - client
         - server
   build_client:
-    working_directory: ~/project/client
+    working_directory: "~/project/client"
     docker:
     - image: circleci/rust
     steps:
@@ -33,7 +33,7 @@ jobs:
               - "~/.cargo"
               - "~/project/client/target"
   test_client:
-    working_directory: ~/project/client
+    working_directory: "~/project/client"
     docker:
     - image: circleci/rust
     steps:
