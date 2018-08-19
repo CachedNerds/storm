@@ -36,41 +36,41 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: '~/project/client'
+          at: ~/project
       - restore_cache:
           key: client-app-cache
       - run:
           name: Test Client
-          command: cargo test
+          command: cargo test --manifest-path=client/Cargo.toml
   build_server:
-    working_directory: ~/project/server
+    working_directory: ~/project/storm
     docker:
       - image: circleci/rust
     steps:
       - checkout
       - run:
           name: Build Server
-          command: cargo build
+          command: cargo build --manifest-path=server/Cargo.toml
       - persist_to_workspace:
-          root: "~/project/server/"
+          root: server
           paths:
             - target
-            - save_cache:
-                key: server-cache
-                paths:
-                - "~/.cargo"
-                - "~/project/server/target"
+      - save_cache:
+          key: server-cache
+          paths:
+          - "~/.cargo"
   test_server:
-    working_directory: ~/project/server
     docker:
-      - image: circleci/rust
+    - image: circleci/rust
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/project
       - restore_cache:
           key: server-cache
       - run:
           name: Test Server
-          command: cargo test
+          command: cargo test --manifest-path=server/Cargo.toml
 workflows:
   version: 2
   build:
@@ -79,9 +79,15 @@ workflows:
       - build_client:
           requires:
             - get_project
+      - test_client:
+          requires:
+          - build_client
       - build_server:
           requires:
             - get_project
+      - test_server:
+          requires:
+          - build_server
 #    - deploy:
 #        requires:
 #        - build
