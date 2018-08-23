@@ -1,34 +1,68 @@
-extern crate storm_server;
 extern crate diesel;
+extern crate futures;
+extern crate hyper;
+extern crate serde;
+extern crate serde_json;
+extern crate storm_server;
 
-use storm_server::db;
-use storm_server::models::users::*;
-use storm_server::controllers;
-use std::io::stdin;
+use diesel::pg::PgConnection;
+use futures::{future, Stream};
+use hyper::rt::{self, Future};
+use hyper::service::service_fn;
+use hyper::Chunk;
+use hyper::{Body, Method, Request, Response, Server, StatusCode};
 
-fn main() {
-    let connection = db::establish_connection();
+use serde::de;
 
-    println!("User ID: ");
-    let mut user_id = String::new();
-    stdin().read_line(&mut user_id).unwrap();
-    let user_id = &user_id[..(user_id.len() - 1)];
-    let user_id = user_id.parse::<i32>().unwrap();
+fn deserialize<T>(body: Vec<u8>) -> serde_json::Result<T>
+where
+    for<'de> T: de::Deserialize<'de>,
+{
+    serde_json::from_slice(&body)
+}
 
-    println!("New username: ");
-    let mut name = String::new();
-    stdin().read_line(&mut name).unwrap();
-    let name = &name[..(name.len() - 1)];
+// Just a simple type alias
+type BoxFut = Box<Future<Item = Response<Body>, Error = hyper::Error> + Send>;
 
-    let updated_user = UpdateUser {
-        username: Some(String::from(name))
+fn service(req: Request<Body>) -> BoxFut {
+    let mut response = Response::new(Body::empty());
+
+    match (req.method(), req.uri().path()) {
+        (&Method::GET, "/") => {
+            *response.body_mut() = Body::from("Try POSTing data to /echo");
+        }
+//        (&Method::POST, "/users") => {
+//            let (parts, body) = req.into_parts();
+//            body.concat2().map(move |chunk| {
+//                let body = chunk.iter().cloned().collect::<Vec<u8>>();
+//                match deserialize(body) {
+//                    Err(_) => {}
+//                    Ok(json) => {
+//
+//                    }
+//                }
+//            });
+//        }
+        (&Method::GET, "/users") => {}
+        (&Method::PUT, "/users") => {}
+        (&Method::DELETE, "/users") => {}
+        _ => {
+            *response.status_mut() = StatusCode::NOT_FOUND;
+        }
     };
 
-    controllers::users::update(&connection, user_id, &updated_user);
+    Box::new(future::ok(response))
+}
 
-    let user = controllers::users::fetch(&connection, user_id);
+fn main() {
+    // This is our socket address...
+    let addr = ([127, 0, 0, 1], 3000).into();
 
-    println!("{}", user.id);
-    println!("--------");
-    println!("{}", user.username);
+    let server = Server::bind(&addr)
+        .serve(|| service_fn(service))
+        .map_err(|e| println!("server error: {}", e));
+
+    println!("Listening on http://{}", addr);
+
+    rt::run(server);
 }

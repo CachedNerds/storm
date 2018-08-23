@@ -3,8 +3,9 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+extern crate serde;
+extern crate serde_json;
 
-pub mod schema;
+pub mod user;
 pub mod db;
-pub mod models;
-pub mod controllers;
+pub mod schema;
